@@ -1,42 +1,58 @@
 package projet_ihm;
 
-import javafx.application.Application;
-import static javafx.application.Application.launch;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
-import javafx.scene.Scene;
+import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
-
 /**
  *
  * @author Amandine
  */
-public class listStudent {
-    private TableView table = new TableView();
-
-    public listStudent() {
+public class listStudent extends Parent{
+    
+    public listStudent(ObservableList<StudentV2> observableStudents) {
+        TableView table = new TableView();
+        GridPane grid = new GridPane();
+        
+        
+        
         final Label label = new Label("Voici la liste des étudiants : ");
         label.setFont(new Font("Arial", 20));
  
         table.setEditable(true);
  
         TableColumn prenomCol = new TableColumn("Prénom");
+        prenomCol.setCellValueFactory(
+                new PropertyValueFactory<Student, String>("fName"));
         TableColumn nomCol = new TableColumn("Nom");
+        nomCol.setCellValueFactory(
+                new PropertyValueFactory<Student, String>("lName"));
         TableColumn naissanceCol = new TableColumn("Année de naissance");
+        naissanceCol.setCellValueFactory(
+                new PropertyValueFactory<Student, String>("dateOfBirth"));
         TableColumn promotionCol = new TableColumn("Promotion");
+        promotionCol.setCellValueFactory(
+                new PropertyValueFactory<Student, String>("promotion"));
         TableColumn modifCol = new TableColumn("Modification");
         TableColumn supprCol = new TableColumn("Suppression");
         
+        
+        table.setItems(observableStudents);
         table.getColumns().addAll(prenomCol, nomCol, naissanceCol, promotionCol, modifCol, supprCol);
- 
-        final VBox vbox = new VBox();
-        vbox.setSpacing(5);
-        vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(label, table);
+        table.setMinWidth(600);
+        grid.add(table, 0, 0);
+        grid.setAlignment(Pos.CENTER);
+        grid.setHgap(40);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(15, 15, 15, 15));
+        
+        this.getChildren().add(grid);
+      
     }
 }

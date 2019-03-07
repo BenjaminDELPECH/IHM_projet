@@ -5,37 +5,46 @@
  */
 package projet_ihm;
 
-
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import static jdk.nashorn.internal.objects.NativeRegExpExecResult.length;
 
 /**
  *
  * @author benja
  */
-public class formAddStudent extends GridPane{
-    GridPane grid;
-    public formAddStudent(){
-        grid = new GridPane();
+public class formAddStudent extends Parent {
+
+    public formAddStudent(ObservableList<StudentV2> observableStudents) {
+        GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(25, 25, 25, 25));
 
-        
+        ImageView add_etu = new ImageView(new Image(formAddStudent.class.getResourceAsStream("images/add.png")));
+        add_etu.setFitHeight(50);
+        add_etu.setPreserveRatio(true);
+        grid.add(add_etu, 3, 2);
+
         Text scenetitle = new Text("Ajouter un étudiant");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
         grid.add(scenetitle, 0, 0, 3, 1);
@@ -45,7 +54,7 @@ public class formAddStudent extends GridPane{
 
         TextField nomTextField = new TextField();
         grid.add(nomTextField, 1, 1);
-        
+
         final Text nomError = new Text("");
         grid.add(nomError, 2, 1);
 
@@ -54,16 +63,19 @@ public class formAddStudent extends GridPane{
 
         TextField prenomTextField = new TextField();
         grid.add(prenomTextField, 1, 2);
-        
+
         final Text prenomError = new Text("");
         grid.add(prenomError, 2, 2);
-        
+
+        //Date Naissance
         Label dateNaissanceLabel = new Label("Date de naissance:");
         grid.add(dateNaissanceLabel, 0, 3);
-
-        DatePicker dateNaissanceField = new DatePicker();
+        TextField dateNaissanceField = new TextField();
         grid.add(dateNaissanceField, 1, 3);
-        
+        final Text dateError = new Text();
+        dateError.setFill(Color.FIREBRICK);
+        grid.add(dateError, 2, 3);
+
         Label selectPromotionLabel = new Label("Promotion:");
         grid.add(selectPromotionLabel, 0, 4);
 
@@ -73,9 +85,7 @@ public class formAddStudent extends GridPane{
         choiceBox.getItems().add("M2");
         choiceBox.getStyleClass().add("test");
         grid.add(choiceBox, 1, 4);
-        
-        
-        
+
         Button btn = new Button("Valider");
         HBox hbBtn = new HBox(10);
         hbBtn.setAlignment(Pos.BOTTOM_RIGHT);
@@ -83,16 +93,82 @@ public class formAddStudent extends GridPane{
         grid.add(hbBtn, 1, 5);
         final Text actiontarget = new Text("");
         grid.add(actiontarget, 1, 6);
-
+        this.getChildren().add(grid);
         btn.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent e) {
                 nomError.setFill(Color.FIREBRICK);
                 prenomError.setFill(Color.FIREBRICK);
-                nomError.setText(nomTextField.getText());
-                prenomError.setText(prenomTextField.getText());
+                boolean valid = true;
+                
+                
+                switch (verifChampsStudent.verifName(nomTextField.getText())) {
+                    case 1:
+                        nomError.setText("Champ vide");
+                        valid = false;
+                        break;
+                    case 2:
+                        nomError.setText("Champ invalide");
+                        valid = false;
+                        break;
+                    default:
+                        nomError.setText("");
+                        break;
+                }
+
+                switch (verifChampsStudent.verifName(prenomTextField.getText())) {
+                    case 1:
+                        prenomError.setText("Champ vide");
+                        valid = false;
+                        break;
+                    case 2:
+                        prenomError.setText("Champ invalide");
+                        valid = false;
+                        break;
+                    default:
+                        prenomError.setText("");
+                        break;
+                }
+
+                if (dateNaissanceField.getText().length()!=0) {
+                    switch (verifChampsStudent.verifDateOfBirth(Integer.valueOf(dateNaissanceField.getText()))) {
+                        case 1:
+                            dateError.setText("Champ vide");
+                            valid = false;
+                            break;
+                        case 2:
+                            dateError.setText("Champ invalide");
+                            valid = false;
+                            break;
+                        default:
+                            dateError.setText("");
+                            break;
+                    }
+                } else {
+                    dateError.setText("Champ vide");
+                }
+
+                if (valid) {
+                    StudentV2 student1 = new StudentV2(nomTextField.getText(), prenomTextField.getText(), Integer.valueOf(dateNaissanceField.getText()), choiceBox.getValue().toString());
+                    nomTextField.clear();
+                    prenomTextField.clear();
+                    dateNaissanceField.clear();
+                    observableStudents.add(student1);
+                }
             }
         });
+
+        dateNaissanceField.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue,
+                    String newValue
+            ) {
+                if (!newValue.matches("\\d*")) {
+                    dateNaissanceField.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+            }
+        });
+
     }
 }
