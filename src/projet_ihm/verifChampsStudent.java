@@ -16,18 +16,18 @@ import java.util.regex.Pattern;
 public class verifChampsStudent {
 
     static int verifName(String name) {
-        System.out.println(name.getClass().getName());
-        System.out.println(name);
+        //System.out.println(name.getClass().getName());
+        //System.out.println(name);
         
-        System.out.println(name);
+        //System.out.println(name);
         Pattern pattern;
         Matcher matcher;
 
-        pattern = Pattern.compile("((\\d)|(^\\s))|(\\s$)|([]()");
+        pattern = Pattern.compile("((\\d)|(^\\s))|(\\s$)|([&~²\"\\(\\)\\{\\}\\[\\]\\|\\+\\*\\/\\#\\_\\@\\%\\€\\$\\£\\¤\\µ\\,\\?\\;\\.\\:\\§\\!])");
         matcher = pattern.matcher(name);
 
         if (matcher.find()) {
-            System.out.println("ddd");
+            //System.out.println("ddd");
             return 2;
         } else if (name.length()==0) {
             return 1;
