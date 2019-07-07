@@ -43,7 +43,7 @@ public class formAddStudent extends Parent {
         ImageView add_etu = new ImageView(new Image(formAddStudent.class.getResourceAsStream("images/add.png")));
         add_etu.setFitHeight(50);
         add_etu.setPreserveRatio(true);
-        grid.add(add_etu, 3, 2);
+        grid.add(add_etu, 0, 0);
 
         Text scenetitle = new Text("Ajouter un étudiant");
         scenetitle.setFont(Font.font("Tahoma", FontWeight.NORMAL, 20));
